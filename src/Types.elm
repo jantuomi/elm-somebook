@@ -1,21 +1,30 @@
 module Types exposing (..)
 
+import Http
+import Time
+
 
 type alias Model =
     { posts : List Post
     , displayError : DisplayableError
+    , now : Time.Posix
     }
 
 
 type Msg
     = NoOp
-    | FetchPostsSuccess (List Post)
-    | FetchPostsFailure DisplayableError
+      -- TIME
+    | SetNowPosix Time.Posix
+      -- POSTS
+    | GetPosts
+    | GotPosts (Result Http.Error (List Post))
+    | LikePost Post
+    | LikedPost (Result Http.Error Post)
 
 
 type DisplayableError
-    = Error String
-    | NoError
+    = DHttpError Http.Error
+    | DNoError
 
 
 type alias Author =
@@ -28,4 +37,6 @@ type alias Post =
     { id : String
     , content : String
     , author : Author
+    , createdAt : Time.Posix
+    , likes : Int
     }

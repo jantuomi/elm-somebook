@@ -1,0 +1,14 @@
+{
+  "posts": [
+    {
+      "id": "5CEDAFAA-4CB9-4BF9-A0B2-EB4DF373B4A3",
+      "content": "Hello world",
+      "createdAt": 1635505671,
+      "author": {
+        "id": "EA8E23FC-8F12-404A-9A68-576FBDF72934",
+        "name": "George Technoman"
+      },
+      "likes": 28
+    }
+  ]
+}
