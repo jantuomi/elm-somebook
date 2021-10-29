@@ -3,10 +3,10 @@ module Pages.Feed exposing (..)
 import Css exposing (..)
 import DateFormat.Relative exposing (relativeTime)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Html.Styled.Events exposing (onClick, onInput, onSubmit)
 import Time exposing (now)
-import Types exposing (DisplayableError(..), Model, Msg(..), Post)
+import Types exposing (Model, Msg(..), Post)
 
 
 styles =
@@ -19,6 +19,7 @@ styles =
         css
             [ padding2 (px 15) (px 20)
             , backgroundColor (hex "#eee")
+            , marginBottom (px 10)
             ]
     , postTitle =
         css
@@ -28,23 +29,16 @@ styles =
             [ marginRight (px 5)
             , cursor pointer
             ]
+    , composeForm =
+        css
+            [ displayFlex
+            , flexFlow2 row wrap
+            ]
+    , composeInput =
+        css
+            [ flex (int 1)
+            ]
     }
-
-
-derrorToHtml : DisplayableError -> Html Msg
-derrorToHtml derror =
-    case derror of
-        DNoError ->
-            text ""
-
-        DHttpError httpErr ->
-            text <| Debug.toString httpErr
-
-
-derrorDiv : Model -> Html Msg
-derrorDiv model =
-    div []
-        [ derrorToHtml model.displayError ]
 
 
 postDiv : Time.Posix -> Post -> Html Msg
@@ -64,7 +58,26 @@ postDiv now post =
 
 postsDiv : Model -> Html Msg
 postsDiv model =
-    div [] <| List.map (postDiv model.now) model.posts
+    case model.posts of
+        Just posts ->
+            div [] <| List.map (postDiv model.now) posts
+
+        Nothing ->
+            div [] [ text "Loading posts..." ]
+
+
+composeDiv : Model -> Html Msg
+composeDiv model =
+    form [ styles.composeForm, onSubmit ComposePost ]
+        [ input
+            [ styles.composeInput
+            , placeholder "Type a new post..."
+            , onInput ComposeInputChanged
+            , value model.composeInputValue
+            ]
+            []
+        , button [ type_ "submit" ] [ text "➡️" ]
+        ]
 
 
 headerSection : Model -> Html msg
@@ -77,8 +90,8 @@ headerSection _ =
 mainSection : Model -> Html Msg
 mainSection model =
     main_ [] <|
-        [ derrorDiv model
-        , postsDiv model
+        [ postsDiv model
+        , composeDiv model
         ]
 
 

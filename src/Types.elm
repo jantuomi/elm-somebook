@@ -5,8 +5,8 @@ import Time
 
 
 type alias Model =
-    { posts : List Post
-    , displayError : DisplayableError
+    { posts : Maybe (List Post)
+    , composeInputValue : String
     , now : Time.Posix
     }
 
@@ -20,11 +20,10 @@ type Msg
     | GotPosts (Result Http.Error (List Post))
     | LikePost Post
     | LikedPost (Result Http.Error Post)
-
-
-type DisplayableError
-    = DHttpError Http.Error
-    | DNoError
+      -- COMPOSE POST
+    | ComposeInputChanged String
+    | ComposePost
+    | ComposedPost (Result Http.Error Post)
 
 
 type alias Author =

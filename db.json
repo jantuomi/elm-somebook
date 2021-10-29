@@ -8,7 +8,67 @@
         "id": "EA8E23FC-8F12-404A-9A68-576FBDF72934",
         "name": "George Technoman"
       },
-      "likes": 28
+      "likes": 38
+    },
+    {
+      "content": "asd",
+      "createdAt": 1635513526,
+      "likes": 1,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "-_5iRYd"
+    },
+    {
+      "content": "new post :)))",
+      "createdAt": 1635513654,
+      "likes": 1,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "sgiJnlL"
+    },
+    {
+      "content": "I'll have two number nines",
+      "createdAt": 1635514095,
+      "likes": 1,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "g5Vggns"
+    },
+    {
+      "content": "asdasdasd",
+      "createdAt": 1635514147,
+      "likes": 0,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "bIZavcS"
+    },
+    {
+      "content": "asdasdas",
+      "createdAt": 1635514155,
+      "likes": 0,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "bsb19RF"
+    },
+    {
+      "content": "asdasd",
+      "createdAt": 1635514207,
+      "likes": 0,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "miEWafM"
     }
   ]
 }

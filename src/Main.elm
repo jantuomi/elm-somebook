@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser exposing (Document)
 import Browser.Navigation exposing (Key)
@@ -10,7 +10,7 @@ import Json.Encode
 import Pages.Feed exposing (feedView)
 import Task
 import Time
-import Types exposing (Author, DisplayableError(..), Model, Msg(..), Post)
+import Types exposing (Author, Model, Msg(..), Post)
 import Url exposing (Url)
 
 
@@ -27,14 +27,21 @@ main =
 
 
 
+-- PORTS
+
+
+port showAlert : String -> Cmd msg
+
+
+
 -- INIT
 
 
 init : () -> Url -> Key -> ( Model, Cmd Msg )
 init _ _ _ =
-    ( { posts = []
-      , displayError = DNoError
+    ( { posts = Nothing
       , now = Time.millisToPosix 0
+      , composeInputValue = ""
       }
     , Cmd.batch [ getPosts, Task.perform SetNowPosix Time.now ]
     )
@@ -57,24 +64,49 @@ update msg model =
             ( model, getPosts )
 
         GotPosts (Result.Ok posts) ->
-            ( { model | posts = posts }, Cmd.none )
+            ( { model | posts = Just posts }, Cmd.none )
 
         GotPosts (Result.Err httpErr) ->
-            ( { model | displayError = DHttpError httpErr }
-            , Cmd.none
+            ( model
+            , showAlert (Debug.toString httpErr)
             )
 
         LikePost post ->
             ( model, likePost post )
 
         LikedPost (Result.Ok post) ->
-            ( { model | posts = replaceMatchingPost post model.posts }
+            ( { model | posts = Just <| replaceMatchingPost post (Maybe.withDefault [] model.posts) }
             , Cmd.none
             )
 
         LikedPost (Result.Err httpErr) ->
-            ( { model | displayError = DHttpError httpErr }
+            ( model
+            , showAlert (Debug.toString httpErr)
+            )
+
+        ComposeInputChanged value ->
+            ( { model | composeInputValue = value }, Cmd.none )
+
+        ComposePost ->
+            ( model
+            , if String.length model.composeInputValue > 0 then
+                composePost model
+
+              else
+                Cmd.none
+            )
+
+        ComposedPost (Result.Ok post) ->
+            ( { model
+                | posts = Maybe.map (\posts -> post :: posts) model.posts
+                , composeInputValue = ""
+              }
             , Cmd.none
+            )
+
+        ComposedPost (Result.Err httpErr) ->
+            ( model
+            , showAlert (Debug.toString httpErr)
             )
 
 
@@ -113,6 +145,28 @@ likePost post =
         , expect = Http.expectJson LikedPost postDecoder
         , timeout = Nothing
         , tracker = Nothing
+        }
+
+
+composePost : Model -> Cmd Msg
+composePost model =
+    Http.post
+        { url = makeApiUrl Config.ApiCompose
+        , expect = Http.expectJson ComposedPost postDecoder
+        , body =
+            Http.jsonBody
+                (Json.Encode.object
+                    [ ( "content", Json.Encode.string model.composeInputValue )
+                    , ( "createdAt", Json.Encode.int <| Time.posixToMillis model.now // 1000 )
+                    , ( "likes", Json.Encode.int 0 )
+                    , ( "author"
+                      , Json.Encode.object
+                            [ ( "id", Json.Encode.string "logged-in-user-id" )
+                            , ( "name", Json.Encode.string "Logged in user" )
+                            ]
+                      )
+                    ]
+                )
         }
 
 
