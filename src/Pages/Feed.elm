@@ -5,6 +5,8 @@ import DateFormat.Relative exposing (relativeTime)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, placeholder, src, type_, value)
 import Html.Styled.Events exposing (onClick, onInput, onSubmit)
+import Html.Styled.Keyed as Keyed
+import Html.Styled.Lazy exposing (lazy)
 import RemoteData exposing (RemoteData(..))
 import Time exposing (now)
 import Types exposing (Model, Msg(..), Post)
@@ -57,7 +59,8 @@ styles =
 
 postDiv : Time.Posix -> Post -> Html Msg
 postDiv now post =
-    div [ styles.post ]
+    div
+        [ styles.post ]
         [ span []
             [ img [ styles.postProfilePicture, src post.userPictureUrl ] [] ]
         , span [ styles.postHeader ]
@@ -74,6 +77,11 @@ postDiv now post =
         ]
 
 
+keyedPostDiv : Time.Posix -> Post -> ( String, Html Msg )
+keyedPostDiv now post =
+    ( post.id, lazy (postDiv now) post )
+
+
 postsDiv : Model -> Html Msg
 postsDiv model =
     case model.posts of
@@ -87,7 +95,7 @@ postsDiv model =
             div [] []
 
         Success posts ->
-            div [ styles.postList ] <| List.map (postDiv model.now) posts
+            Keyed.node "div" [ styles.postList ] <| List.map (keyedPostDiv model.now) posts
 
 
 composeDiv : Model -> Html Msg
