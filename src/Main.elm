@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Browser.Navigation exposing (Key)
 import Config exposing (makeApiUrl)
 import Html.Styled exposing (..)
+import Html.Styled.Events exposing (onClick)
 import Http
 import Json.Decode exposing (Decoder, field, int, list, map2, map5, string)
 import Json.Encode
@@ -33,6 +34,9 @@ main =
 port showAlert : String -> Cmd msg
 
 
+port requestLogout : () -> Cmd msg
+
+
 
 -- INIT
 
@@ -60,6 +64,9 @@ update msg model =
         SetNowPosix now ->
             ( { model | now = now }, Cmd.none )
 
+        RequestLogout ->
+            ( model, requestLogout () )
+
         GetPosts ->
             ( model, getPosts )
 
@@ -68,7 +75,7 @@ update msg model =
 
         GotPosts (Result.Err httpErr) ->
             ( model
-            , showAlert (Debug.toString httpErr)
+            , showAlert <| httpErrorToString httpErr
             )
 
         LikePost post ->
@@ -81,7 +88,7 @@ update msg model =
 
         LikedPost (Result.Err httpErr) ->
             ( model
-            , showAlert (Debug.toString httpErr)
+            , showAlert <| httpErrorToString httpErr
             )
 
         ComposeInputChanged value ->
@@ -106,7 +113,7 @@ update msg model =
 
         ComposedPost (Result.Err httpErr) ->
             ( model
-            , showAlert (Debug.toString httpErr)
+            , showAlert <| httpErrorToString httpErr
             )
 
 
@@ -215,5 +222,39 @@ postDecoder =
 view : Model -> Document Msg
 view model =
     { title = "Shoob book"
-    , body = feedView model |> List.map toUnstyled
+    , body = button [ onClick RequestLogout ] [ text "Logout" ] :: feedView model |> List.map toUnstyled
     }
+
+
+
+-- UTILS
+
+
+httpErrorToString : Http.Error -> String
+httpErrorToString err =
+    case err of
+        Http.BadUrl url ->
+            "URL {0} is invalid" |> templ [ url ]
+
+        Http.Timeout ->
+            "Request has timed out"
+
+        Http.NetworkError ->
+            "Unable to reach the server, check your network connection"
+
+        Http.BadStatus status ->
+            "Server responded with status {0}" |> templ [ String.fromInt status ]
+
+        Http.BadBody msg ->
+            msg
+
+
+templ : List String -> String -> String
+templ rs original =
+    let
+        templElement_ : ( Int, String ) -> String -> String
+        templElement_ ( index, r ) orig_ =
+            String.replace ("{" ++ String.fromInt index ++ "}") r orig_
+    in
+    List.indexedMap Tuple.pair rs
+        |> List.foldl templElement_ original

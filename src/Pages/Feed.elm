@@ -15,6 +15,12 @@ styles =
             [ maxWidth (px 600)
             , margin2 (px 10) auto
             ]
+    , postList =
+        css
+            [ overflow scroll
+            , maxHeight (vh 70)
+            , marginBottom (px 10)
+            ]
     , post =
         css
             [ padding2 (px 15) (px 20)
@@ -60,7 +66,7 @@ postsDiv : Model -> Html Msg
 postsDiv model =
     case model.posts of
         Just posts ->
-            div [] <| List.map (postDiv model.now) posts
+            div [ styles.postList ] <| List.map (postDiv model.now) posts
 
         Nothing ->
             div [] [ text "Loading posts..." ]

@@ -13,6 +13,7 @@ type alias Model =
 
 type Msg
     = NoOp
+    | RequestLogout
       -- TIME
     | SetNowPosix Time.Posix
       -- POSTS

@@ -1,3 +1,6 @@
 .git/
 elm-stuff/
 build/
+dist/
+.cache/
+node_modules/

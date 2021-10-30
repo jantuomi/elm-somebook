@@ -13,7 +13,7 @@
     {
       "content": "asd",
       "createdAt": 1635513526,
-      "likes": 1,
+      "likes": 2,
       "author": {
         "id": "logged-in-user-id",
         "name": "Logged in user"
@@ -63,12 +63,42 @@
     {
       "content": "asdasd",
       "createdAt": 1635514207,
-      "likes": 0,
+      "likes": 2,
       "author": {
         "id": "logged-in-user-id",
         "name": "Logged in user"
       },
       "id": "miEWafM"
+    },
+    {
+      "content": "plö lö",
+      "createdAt": 1635516837,
+      "likes": 5,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "A44uzWi"
+    },
+    {
+      "content": "asdasd",
+      "createdAt": 1635526426,
+      "likes": 3,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "_wepGww"
+    },
+    {
+      "content": "pippeli",
+      "createdAt": 1635526491,
+      "likes": 1,
+      "author": {
+        "id": "logged-in-user-id",
+        "name": "Logged in user"
+      },
+      "id": "E3th4Nq"
     }
   ]
 }
