@@ -3,19 +3,21 @@ port module Main exposing (..)
 import Browser exposing (Document)
 import Browser.Navigation exposing (Key)
 import Config exposing (makeApiUrl)
+import Header exposing (headerView)
 import Html.Styled exposing (..)
-import Html.Styled.Events exposing (onClick)
 import Http
-import Json.Decode exposing (Decoder, field, int, list, map2, map5, string)
+import Json.Decode exposing (Decoder, field, int, list, map2, map6, string)
 import Json.Encode
 import Pages.Feed exposing (feedView)
+import RemoteData
 import Task
 import Time
-import Types exposing (Author, Model, Msg(..), Post)
+import Types exposing (Author, Model, Msg(..), Post, UserData)
 import Url exposing (Url)
+import Utils exposing (httpErrorToString, listFlat)
 
 
-main : Program () Model Msg
+main : Program UserData Model Msg
 main =
     Browser.application
         { init = init
@@ -41,13 +43,18 @@ port requestLogout : () -> Cmd msg
 -- INIT
 
 
-init : () -> Url -> Key -> ( Model, Cmd Msg )
-init _ _ _ =
-    ( { posts = Nothing
-      , now = Time.millisToPosix 0
+init : UserData -> Url -> Key -> ( Model, Cmd Msg )
+init userData _ key =
+    ( { now = Time.millisToPosix 0
+      , key = key
+      , userData = userData
+      , posts = RemoteData.Loading
       , composeInputValue = ""
       }
-    , Cmd.batch [ getPosts, Task.perform SetNowPosix Time.now ]
+    , Cmd.batch
+        [ getPosts
+        , Task.perform SetNowPosix Time.now
+        ]
     )
 
 
@@ -71,10 +78,10 @@ update msg model =
             ( model, getPosts )
 
         GotPosts (Result.Ok posts) ->
-            ( { model | posts = Just posts }, Cmd.none )
+            ( { model | posts = RemoteData.Success posts }, Cmd.none )
 
         GotPosts (Result.Err httpErr) ->
-            ( model
+            ( { model | posts = RemoteData.Failure httpErr }
             , showAlert <| httpErrorToString httpErr
             )
 
@@ -82,7 +89,7 @@ update msg model =
             ( model, likePost post )
 
         LikedPost (Result.Ok post) ->
-            ( { model | posts = Just <| replaceMatchingPost post (Maybe.withDefault [] model.posts) }
+            ( { model | posts = RemoteData.map (replaceMatchingPost post) model.posts }
             , Cmd.none
             )
 
@@ -105,7 +112,7 @@ update msg model =
 
         ComposedPost (Result.Ok post) ->
             ( { model
-                | posts = Maybe.map (\posts -> post :: posts) model.posts
+                | posts = RemoteData.map (\posts -> post :: posts) model.posts
                 , composeInputValue = ""
               }
             , Cmd.none
@@ -166,10 +173,11 @@ composePost model =
                     [ ( "content", Json.Encode.string model.composeInputValue )
                     , ( "createdAt", Json.Encode.int <| Time.posixToMillis model.now // 1000 )
                     , ( "likes", Json.Encode.int 0 )
+                    , ( "userPictureUrl", Json.Encode.string model.userData.pictureUrl )
                     , ( "author"
                       , Json.Encode.object
-                            [ ( "id", Json.Encode.string "logged-in-user-id" )
-                            , ( "name", Json.Encode.string "Logged in user" )
+                            [ ( "id", Json.Encode.string model.userData.email )
+                            , ( "name", Json.Encode.string model.userData.name )
                             ]
                       )
                     ]
@@ -202,7 +210,7 @@ postsDecoder =
 
 postDecoder : Decoder Post
 postDecoder =
-    map5 Post
+    map6 Post
         (field "id" string)
         (field "content" string)
         (field "author"
@@ -213,6 +221,7 @@ postDecoder =
         )
         (field "createdAt" decodeTime)
         (field "likes" int)
+        (field "userPictureUrl" string)
 
 
 
@@ -222,39 +231,8 @@ postDecoder =
 view : Model -> Document Msg
 view model =
     { title = "Shoob book"
-    , body = button [ onClick RequestLogout ] [ text "Logout" ] :: feedView model |> List.map toUnstyled
+    , body =
+        [ headerView model, feedView model ]
+            |> listFlat
+            |> List.map toUnstyled
     }
-
-
-
--- UTILS
-
-
-httpErrorToString : Http.Error -> String
-httpErrorToString err =
-    case err of
-        Http.BadUrl url ->
-            "URL {0} is invalid" |> templ [ url ]
-
-        Http.Timeout ->
-            "Request has timed out"
-
-        Http.NetworkError ->
-            "Unable to reach the server, check your network connection"
-
-        Http.BadStatus status ->
-            "Server responded with status {0}" |> templ [ String.fromInt status ]
-
-        Http.BadBody msg ->
-            msg
-
-
-templ : List String -> String -> String
-templ rs original =
-    let
-        templElement_ : ( Int, String ) -> String -> String
-        templElement_ ( index, r ) orig_ =
-            String.replace ("{" ++ String.fromInt index ++ "}") r orig_
-    in
-    List.indexedMap Tuple.pair rs
-        |> List.foldl templElement_ original

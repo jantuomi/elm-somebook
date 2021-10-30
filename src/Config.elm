@@ -1,5 +1,7 @@
 module Config exposing (ApiResource(..), makeApiUrl)
 
+import Utils exposing (templ)
+
 
 baseUrl : String
 baseUrl =
@@ -20,8 +22,8 @@ makeApiUrl res =
                 "{baseUrl}/posts?_sort=createdAt&_order=desc"
 
             ApiLikePost postId ->
-                "{baseUrl}/posts/{postId}"
-                    |> String.replace "{postId}" postId
+                "{baseUrl}/posts/{0}"
+                    |> templ [ postId ]
 
             ApiCompose ->
                 "{baseUrl}/posts"

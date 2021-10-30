@@ -51,53 +51,61 @@ const configureClient = async() => {
     window.auth0 = auth0;
 };
 
-// Will run when page finishes loading
-window.onload = async() => {
+const authenticateIfNeeded = async() => {
     await configureClient();
 
-    // If unable to parse the history hash, default to the root URL
-    // if (!showContentFromUrl(window.location.pathname)) {
-    //     showContentFromUrl("/");
-    //     window.history.replaceState({ url: "/" }, {}, "/");
-    // }
+    const userDataExists = await auth0.isAuthenticated();
 
-    const isAuthenticated = await auth0.isAuthenticated();
-
-    if (isAuthenticated) {
+    if (userDataExists) {
+        // If user is in browser state, use that user data
         console.log("> User is authenticated");
         window.history.replaceState({}, document.title, window.location.pathname);
-        // runElmApp();
         return;
     }
 
     console.log("> User not authenticated");
 
+    // No user data in browser, try checking the query params for callback info
     const query = window.location.search;
     const shouldParseResult = query.includes("code=") && query.includes("state=");
 
     if (shouldParseResult) {
+        // If URL contains callback query params, parse them and authenticate
         console.log("> Parsing redirect");
         try {
-            const result = await auth0.handleRedirectCallback();
-
-            if (result.appState && result.appState.targetUrl) {
-                showContentFromUrl(result.appState.targetUrl);
-            }
+            await auth0.handleRedirectCallback();
 
             console.log("Logged in!");
-            return runElmApp();
+
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
         } catch (err) {
             console.log("Error parsing redirect:", err);
         }
     }
 
+    // No data to authenticate with, start login flow and redirect
     login();
+}
+
+// Will run when page finishes loading
+window.onload = async() => {
+    await authenticateIfNeeded();
+    await runElmApp();
 };
 
-const runElmApp = () => {
+const runElmApp = async() => {
     try {
+        const user = await auth0.getUser();
+        const flags = {
+            email: user.email,
+            name: user.name,
+            pictureUrl: user.picture,
+        };
+
         const app = Elm.Main.init({
-            node: document.getElementById("app")
+            node: document.getElementById("app"),
+            flags,
         });
 
         app.ports.showAlert.subscribe((message) => window.alert(message));

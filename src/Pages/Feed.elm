@@ -3,18 +3,16 @@ module Pages.Feed exposing (..)
 import Css exposing (..)
 import DateFormat.Relative exposing (relativeTime)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Html.Styled.Attributes exposing (css, placeholder, src, type_, value)
 import Html.Styled.Events exposing (onClick, onInput, onSubmit)
+import RemoteData exposing (RemoteData(..))
 import Time exposing (now)
 import Types exposing (Model, Msg(..), Post)
 
 
 styles =
     { page =
-        css
-            [ maxWidth (px 600)
-            , margin2 (px 10) auto
-            ]
+        css [ margin2 (px 10) auto ]
     , postList =
         css
             [ overflow scroll
@@ -26,6 +24,16 @@ styles =
             [ padding2 (px 15) (px 20)
             , backgroundColor (hex "#eee")
             , marginBottom (px 10)
+            ]
+    , postProfilePicture =
+        css
+            [ width (px 40)
+            , height (px 40)
+            ]
+    , postHeader =
+        css
+            [ display inlineBlock
+            , marginLeft (px 10)
             ]
     , postTitle =
         css
@@ -50,9 +58,13 @@ styles =
 postDiv : Time.Posix -> Post -> Html Msg
 postDiv now post =
     div [ styles.post ]
-        [ h3 [ styles.postTitle ] [ text post.author.name ]
-        , i []
-            [ text <| relativeTime now post.createdAt
+        [ span []
+            [ img [ styles.postProfilePicture, src post.userPictureUrl ] [] ]
+        , span [ styles.postHeader ]
+            [ h3 [ styles.postTitle ] [ text post.author.name ]
+            , i []
+                [ text <| relativeTime now post.createdAt
+                ]
             ]
         , p [] [ text post.content ]
         , span []
@@ -65,11 +77,17 @@ postDiv now post =
 postsDiv : Model -> Html Msg
 postsDiv model =
     case model.posts of
-        Just posts ->
-            div [ styles.postList ] <| List.map (postDiv model.now) posts
+        Initial ->
+            div [] []
 
-        Nothing ->
+        Loading ->
             div [] [ text "Loading posts..." ]
+
+        Failure _ ->
+            div [] []
+
+        Success posts ->
+            div [ styles.postList ] <| List.map (postDiv model.now) posts
 
 
 composeDiv : Model -> Html Msg

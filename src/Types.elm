@@ -1,13 +1,24 @@
 module Types exposing (..)
 
+import Browser.Navigation exposing (Key)
 import Http
+import RemoteData exposing (RemoteData)
 import Time
 
 
 type alias Model =
-    { posts : Maybe (List Post)
+    { now : Time.Posix
+    , key : Key
+    , userData : UserData
+    , posts : RemoteData (List Post)
     , composeInputValue : String
-    , now : Time.Posix
+    }
+
+
+type alias UserData =
+    { name : String
+    , email : String
+    , pictureUrl : String
     }
 
 
@@ -39,4 +50,5 @@ type alias Post =
     , author : Author
     , createdAt : Time.Posix
     , likes : Int
+    , userPictureUrl : String
     }

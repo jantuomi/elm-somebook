@@ -1,104 +1,59 @@
 {
   "posts": [
     {
-      "id": "5CEDAFAA-4CB9-4BF9-A0B2-EB4DF373B4A3",
-      "content": "Hello world",
-      "createdAt": 1635505671,
+      "content": "hello",
+      "createdAt": 1635607271,
+      "likes": 3,
+      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
       "author": {
-        "id": "EA8E23FC-8F12-404A-9A68-576FBDF72934",
-        "name": "George Technoman"
+        "id": "jans.tuomi@gmail.com",
+        "name": "Jan Tuomi"
       },
-      "likes": 38
+      "id": "1"
     },
     {
       "content": "asd",
-      "createdAt": 1635513526,
-      "likes": 2,
-      "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
-      },
-      "id": "-_5iRYd"
-    },
-    {
-      "content": "new post :)))",
-      "createdAt": 1635513654,
-      "likes": 1,
-      "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
-      },
-      "id": "sgiJnlL"
-    },
-    {
-      "content": "I'll have two number nines",
-      "createdAt": 1635514095,
-      "likes": 1,
-      "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
-      },
-      "id": "g5Vggns"
-    },
-    {
-      "content": "asdasdasd",
-      "createdAt": 1635514147,
+      "createdAt": 1635607657,
       "likes": 0,
+      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
       "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
+        "id": "jans.tuomi@gmail.com",
+        "name": "Jan Tuomi"
       },
-      "id": "bIZavcS"
+      "id": "3B9scEm"
     },
     {
-      "content": "asdasdas",
-      "createdAt": 1635514155,
+      "content": "throwaway account here :---))",
+      "createdAt": 1635610312,
       "likes": 0,
+      "userPictureUrl": "https://s.gravatar.com/avatar/ef587429f8bb85b585c901c528cacca9?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fnj.png",
       "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
+        "id": "njezhmeteiexjqoviz@pp7rvv.com",
+        "name": "njezhmeteiexjqoviz@pp7rvv.com"
       },
-      "id": "bsb19RF"
+      "id": "sKnOARV"
     },
     {
-      "content": "asdasd",
-      "createdAt": 1635514207,
-      "likes": 2,
+      "content": "asd",
+      "createdAt": 1635610687,
+      "likes": 0,
+      "userPictureUrl": "https://s.gravatar.com/avatar/ef587429f8bb85b585c901c528cacca9?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fnj.png",
       "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
+        "id": "njezhmeteiexjqoviz@pp7rvv.com",
+        "name": "njezhmeteiexjqoviz@pp7rvv.com"
       },
-      "id": "miEWafM"
+      "id": "0nOVGJM"
     },
     {
-      "content": "plö lö",
-      "createdAt": 1635516837,
-      "likes": 5,
+      "content": "foobar",
+      "createdAt": 1635610870,
+      "likes": 0,
+      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
       "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
+        "id": "jans.tuomi@gmail.com",
+        "name": "Jan Tuomi"
       },
-      "id": "A44uzWi"
-    },
-    {
-      "content": "asdasd",
-      "createdAt": 1635526426,
-      "likes": 3,
-      "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
-      },
-      "id": "_wepGww"
-    },
-    {
-      "content": "pippeli",
-      "createdAt": 1635526491,
-      "likes": 1,
-      "author": {
-        "id": "logged-in-user-id",
-        "name": "Logged in user"
-      },
-      "id": "E3th4Nq"
+      "id": "JvXaf8k"
     }
   ]
 }
