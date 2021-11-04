@@ -3,13 +3,14 @@ module Pages.Feed exposing (..)
 import Css exposing (..)
 import DateFormat.Relative exposing (relativeTime)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, placeholder, src, type_, value)
+import Html.Styled.Attributes exposing (css, href, placeholder, src, type_, value)
 import Html.Styled.Events exposing (onClick, onInput, onSubmit)
 import Html.Styled.Keyed as Keyed
 import Html.Styled.Lazy exposing (lazy)
 import RemoteData exposing (RemoteData(..))
 import Time exposing (now)
 import Types exposing (Model, Msg(..), Post)
+import Utils exposing (templ)
 
 
 styles =
@@ -72,12 +73,14 @@ postDiv now post =
     in
     div
         [ styles.post ]
-        [ span []
-            [ img [ styles.postProfilePicture, src post.userPictureUrl ] [] ]
-        , span [ styles.postHeader ]
-            [ h3 [ styles.postTitle ] [ text post.author.name ]
-            , i []
-                [ text <| relativeTime now post.createdAt
+        [ a [ href <| templ [ post.author.id ] "/profile/{0}" ]
+            [ span []
+                [ img [ styles.postProfilePicture, src post.userPictureUrl ] [] ]
+            , span [ styles.postHeader ]
+                [ h3 [ styles.postTitle ] [ text post.author.name ]
+                , i []
+                    [ text <| relativeTime now post.createdAt
+                    ]
                 ]
             ]
         , p [] [ text post.content ]
@@ -131,13 +134,6 @@ composeDiv model =
         ]
 
 
-headerSection : Model -> Html msg
-headerSection _ =
-    header []
-        [ h1 [] [ text "😎 SOMEBOOK" ]
-        ]
-
-
 mainSection : Model -> Html Msg
 mainSection model =
     main_ [] <|
@@ -149,9 +145,7 @@ mainSection model =
 body : Model -> Html Msg
 body model =
     div [ styles.page ]
-        [ headerSection model
-        , mainSection model
-        ]
+        [ mainSection model ]
 
 
 feedView : Model -> List (Html Msg)

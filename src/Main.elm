@@ -1,7 +1,7 @@
 port module Main exposing (..)
 
 import Browser exposing (Document)
-import Browser.Navigation exposing (Key)
+import Browser.Navigation as Nav
 import Config exposing (makeApiUrl)
 import Header exposing (headerView)
 import Html.Styled exposing (..)
@@ -10,11 +10,14 @@ import Json.Decode exposing (Decoder, field, int, list, map2, map7, maybe, strin
 import Json.Encode
 import Json.Encode.Extra
 import Pages.Feed exposing (feedView)
+import Pages.Profile exposing (profileView)
 import RemoteData
+import Routes exposing (routeParser)
 import Task
 import Time
-import Types exposing (Author, Flags, Model, Msg(..), Post)
+import Types exposing (Author, Flags, Model, Msg(..), Post, Route(..))
 import Url exposing (Url)
+import Url.Parser exposing ((</>), Parser, oneOf, s)
 import Utils exposing (httpErrorToString, listFlat)
 
 
@@ -25,8 +28,8 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = \_ -> NoOp
-        , onUrlChange = \_ -> NoOp
+        , onUrlRequest = LinkClicked
+        , onUrlChange = UrlChanged
         }
 
 
@@ -44,13 +47,14 @@ port requestLogout : () -> Cmd msg
 -- INIT
 
 
-init : Flags -> Url -> Key -> ( Model, Cmd Msg )
-init flags _ key =
+init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     let
         initModel : Model
         initModel =
             { now = Time.millisToPosix 0
             , key = key
+            , url = url
             , userData = flags.userData
             , apiURL = flags.apiURL
             , posts = RemoteData.Loading
@@ -82,6 +86,18 @@ update msg model =
         RequestLogout ->
             ( model, requestLogout () )
 
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model | url = url }, Cmd.none )
+
+        -- BUSINESS LOGIC
         GetPosts ->
             ( model, getPosts model )
 
@@ -251,11 +267,28 @@ postDecoder =
 -- VIEW
 
 
+urlToView : Url -> (Model -> List (Html Msg))
+urlToView url =
+    let
+        route =
+            Url.Parser.parse routeParser url
+    in
+    case route of
+        Just Index ->
+            feedView
+
+        Just (Profile id) ->
+            profileView id
+
+        Nothing ->
+            feedView
+
+
 view : Model -> Document Msg
 view model =
     { title = "SOMEBOOK"
     , body =
-        [ headerView model, feedView model ]
+        [ headerView model, urlToView model.url model ]
             |> listFlat
             |> List.map toUnstyled
     }

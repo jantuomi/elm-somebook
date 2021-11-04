@@ -1,14 +1,17 @@
 module Types exposing (..)
 
+import Browser exposing (UrlRequest)
 import Browser.Navigation exposing (Key)
 import Http
 import RemoteData exposing (RemoteData)
 import Time
+import Url exposing (Url)
 
 
 type alias Model =
     { now : Time.Posix
     , key : Key
+    , url : Url
     , userData : UserData
     , apiURL : String
     , posts : RemoteData (List Post)
@@ -35,6 +38,9 @@ type Msg
     | RequestLogout
       -- TIME
     | SetNowPosix Time.Posix
+      -- NAVIGATION
+    | UrlChanged Url
+    | LinkClicked UrlRequest
       -- POSTS
     | GetPosts
     | GotPosts (Result Http.Error (List Post))
@@ -47,10 +53,19 @@ type Msg
     | ComposedPost (Result Http.Error Post)
 
 
+type Route
+    = Index
+    | Profile UrlSegmentUserId
+
+
 type alias Author =
     { id : String
     , name : String
     }
+
+
+type alias UrlSegmentUserId =
+    String
 
 
 type alias Post =
