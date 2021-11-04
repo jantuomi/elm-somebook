@@ -10,8 +10,15 @@ type alias Model =
     { now : Time.Posix
     , key : Key
     , userData : UserData
+    , apiURL : String
     , posts : RemoteData (List Post)
     , composeInputValue : String
+    }
+
+
+type alias Flags =
+    { userData : UserData
+    , apiURL : String
     }
 
 

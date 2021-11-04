@@ -97,10 +97,15 @@ window.onload = async() => {
 const runElmApp = async() => {
     try {
         const user = await auth0.getUser();
+
+        const isProd = location.host.endsWith("jan.systems");
         const flags = {
-            email: user.email,
-            name: user.name,
-            pictureUrl: user.picture,
+            userData: {
+                email: user.email,
+                name: user.name,
+                pictureUrl: user.picture,
+            },
+            apiURL: isProd ? "https://bookapi.jan.systems" : "http://localhost:5678",
         };
 
         const app = Elm.Main.init({

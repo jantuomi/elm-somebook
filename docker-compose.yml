@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    image: williamyeh/json-server:latest
+    command: --watch -p 80 /data/db.json
+    volumes:
+      - ./db.json:/data/db.json
+    ports:
+      - "5678:80"
+  somebook:
+    build:
+      context: .
+    image: registry.digitalocean.com/jan-systems-registry/somebook:latest
+    ports:
+      - "1234:8080"

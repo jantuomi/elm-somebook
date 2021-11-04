@@ -12,12 +12,12 @@ import Pages.Feed exposing (feedView)
 import RemoteData
 import Task
 import Time
-import Types exposing (Author, Model, Msg(..), Post, UserData)
+import Types exposing (Author, Flags, Model, Msg(..), Post)
 import Url exposing (Url)
 import Utils exposing (httpErrorToString, listFlat)
 
 
-main : Program UserData Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -43,16 +43,21 @@ port requestLogout : () -> Cmd msg
 -- INIT
 
 
-init : UserData -> Url -> Key -> ( Model, Cmd Msg )
-init userData _ key =
-    ( { now = Time.millisToPosix 0
-      , key = key
-      , userData = userData
-      , posts = RemoteData.Loading
-      , composeInputValue = ""
-      }
+init : Flags -> Url -> Key -> ( Model, Cmd Msg )
+init flags _ key =
+    let
+        initModel =
+            { now = Time.millisToPosix 0
+            , key = key
+            , userData = flags.userData
+            , apiURL = flags.apiURL
+            , posts = RemoteData.Loading
+            , composeInputValue = ""
+            }
+    in
+    ( initModel
     , Cmd.batch
-        [ getPosts
+        [ getPosts initModel
         , Task.perform SetNowPosix Time.now
         ]
     )
@@ -75,7 +80,7 @@ update msg model =
             ( model, requestLogout () )
 
         GetPosts ->
-            ( model, getPosts )
+            ( model, getPosts model )
 
         GotPosts (Result.Ok posts) ->
             ( { model | posts = RemoteData.Success posts }, Cmd.none )
@@ -86,7 +91,7 @@ update msg model =
             )
 
         LikePost post ->
-            ( model, likePost post )
+            ( model, likePost model post )
 
         LikedPost (Result.Ok post) ->
             ( { model | posts = RemoteData.map (replaceMatchingPost post) model.posts }
@@ -137,20 +142,20 @@ replaceMatchingPost post posts =
         posts
 
 
-getPosts : Cmd Msg
-getPosts =
+getPosts : Model -> Cmd Msg
+getPosts model =
     Http.get
-        { url = makeApiUrl Config.ApiPosts
+        { url = makeApiUrl model Config.ApiPosts
         , expect = Http.expectJson GotPosts postsDecoder
         }
 
 
-likePost : Post -> Cmd Msg
-likePost post =
+likePost : Model -> Post -> Cmd Msg
+likePost model post =
     Http.request
         { method = "PATCH"
         , headers = []
-        , url = makeApiUrl (Config.ApiLikePost post.id)
+        , url = makeApiUrl model (Config.ApiLikePost post.id)
         , body =
             Http.jsonBody
                 (Json.Encode.object
@@ -165,7 +170,7 @@ likePost post =
 composePost : Model -> Cmd Msg
 composePost model =
     Http.post
-        { url = makeApiUrl Config.ApiCompose
+        { url = makeApiUrl model Config.ApiCompose
         , expect = Http.expectJson ComposedPost postDecoder
         , body =
             Http.jsonBody

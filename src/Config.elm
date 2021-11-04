@@ -1,11 +1,7 @@
 module Config exposing (ApiResource(..), makeApiUrl)
 
+import Types exposing (Model)
 import Utils exposing (templ)
-
-
-baseUrl : String
-baseUrl =
-    "http://localhost:3000"
 
 
 type ApiResource
@@ -14,9 +10,9 @@ type ApiResource
     | ApiCompose
 
 
-makeApiUrl : ApiResource -> String
-makeApiUrl res =
-    String.replace "{baseUrl}" baseUrl <|
+makeApiUrl : Model -> ApiResource -> String
+makeApiUrl model res =
+    String.replace "{baseUrl}" model.apiURL <|
         case res of
             ApiPosts ->
                 "{baseUrl}/posts?_sort=createdAt&_order=desc"
