@@ -17,15 +17,17 @@ styles =
         css [ margin2 (px 10) auto ]
     , postList =
         css
-            [ overflow scroll
-            , maxHeight (vh 70)
-            , marginBottom (px 10)
+            [ marginBottom (px 10)
             ]
     , post =
         css
             [ padding2 (px 15) (px 20)
             , backgroundColor (hex "#eee")
             , marginBottom (px 10)
+            ]
+    , postImage =
+        css
+            [ marginBottom (px 20)
             ]
     , postProfilePicture =
         css
@@ -59,6 +61,15 @@ styles =
 
 postDiv : Time.Posix -> Post -> Html Msg
 postDiv now post =
+    let
+        imageElem =
+            case post.imageUrl of
+                Just url ->
+                    img [ styles.postImage, src url ] []
+
+                Nothing ->
+                    text ""
+    in
     div
         [ styles.post ]
         [ span []
@@ -70,8 +81,9 @@ postDiv now post =
                 ]
             ]
         , p [] [ text post.content ]
+        , imageElem
         , span []
-            [ button [ styles.postLikeButton, onClick (LikePost post) ] [ text "❤️ Like" ]
+            [ button [ styles.postLikeButton, onClick (LikePost post) ] [ text "👏 Clap" ]
             , text <| String.fromInt post.likes
             ]
         ]
@@ -104,8 +116,15 @@ composeDiv model =
         [ input
             [ styles.composeInput
             , placeholder "Type a new post..."
-            , onInput ComposeInputChanged
-            , value model.composeInputValue
+            , onInput ComposeTextInputChanged
+            , value model.composeTextInputValue
+            ]
+            []
+        , input
+            [ styles.composeInput
+            , placeholder "Image URL (optional)"
+            , onInput ComposeImageInputChanged
+            , value model.composeImageInputValue
             ]
             []
         , button [ type_ "submit" ] [ text "➡️" ]
@@ -115,15 +134,15 @@ composeDiv model =
 headerSection : Model -> Html msg
 headerSection _ =
     header []
-        [ h1 [] [ text "Shoob book" ]
+        [ h1 [] [ text "😎 SOMEBOOK" ]
         ]
 
 
 mainSection : Model -> Html Msg
 mainSection model =
     main_ [] <|
-        [ postsDiv model
-        , composeDiv model
+        [ composeDiv model
+        , postsDiv model
         ]
 
 

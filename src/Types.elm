@@ -12,7 +12,8 @@ type alias Model =
     , userData : UserData
     , apiURL : String
     , posts : RemoteData (List Post)
-    , composeInputValue : String
+    , composeTextInputValue : String
+    , composeImageInputValue : String
     }
 
 
@@ -40,7 +41,8 @@ type Msg
     | LikePost Post
     | LikedPost (Result Http.Error Post)
       -- COMPOSE POST
-    | ComposeInputChanged String
+    | ComposeTextInputChanged String
+    | ComposeImageInputChanged String
     | ComposePost
     | ComposedPost (Result Http.Error Post)
 
@@ -58,4 +60,5 @@ type alias Post =
     , createdAt : Time.Posix
     , likes : Int
     , userPictureUrl : String
+    , imageUrl : Maybe String
     }

@@ -6,7 +6,7 @@
     "scripts": {
         "start": "parcel index.html",
         "build": "parcel build index.html",
-        "db": "json-server --watch db.json"
+        "db": "json-server --watch -p 5678 db.json"
     },
     "author": "",
     "license": "ISC",

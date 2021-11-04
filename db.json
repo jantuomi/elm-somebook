@@ -1,13 +1,27 @@
 {
-    "posts": [{
-        "content": "testi",
-        "createdAt": 1636028524,
-        "likes": 0,
-        "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
-        "author": {
-            "id": "jans.tuomi@gmail.com",
-            "name": "Jan Tuomi"
-        },
-        "id": "1"
-    }]
+  "posts": [
+    {
+      "content": "testi",
+      "createdAt": 1636028524,
+      "likes": 1,
+      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
+      "author": {
+        "id": "jans.tuomi@gmail.com",
+        "name": "Jan Tuomi"
+      },
+      "id": "1"
+    },
+    {
+      "content": "funni cat image hehe",
+      "createdAt": 1636036093,
+      "likes": 9,
+      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
+      "imageUrl": "https://i.pinimg.com/originals/8c/ab/4e/8cab4e46f19b1c4ae0ed8ff6c5115e7d.jpg",
+      "author": {
+        "id": "jans.tuomi@gmail.com",
+        "name": "Jan Tuomi"
+      },
+      "id": "Rq-vXQX"
+    }
+  ]
 }

@@ -6,8 +6,9 @@ import Config exposing (makeApiUrl)
 import Header exposing (headerView)
 import Html.Styled exposing (..)
 import Http
-import Json.Decode exposing (Decoder, field, int, list, map2, map6, string)
+import Json.Decode exposing (Decoder, field, int, list, map2, map7, maybe, string)
 import Json.Encode
+import Json.Encode.Extra
 import Pages.Feed exposing (feedView)
 import RemoteData
 import Task
@@ -46,13 +47,15 @@ port requestLogout : () -> Cmd msg
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags _ key =
     let
+        initModel : Model
         initModel =
             { now = Time.millisToPosix 0
             , key = key
             , userData = flags.userData
             , apiURL = flags.apiURL
             , posts = RemoteData.Loading
-            , composeInputValue = ""
+            , composeTextInputValue = ""
+            , composeImageInputValue = ""
             }
     in
     ( initModel
@@ -103,12 +106,15 @@ update msg model =
             , showAlert <| httpErrorToString httpErr
             )
 
-        ComposeInputChanged value ->
-            ( { model | composeInputValue = value }, Cmd.none )
+        ComposeTextInputChanged value ->
+            ( { model | composeTextInputValue = value }, Cmd.none )
+
+        ComposeImageInputChanged value ->
+            ( { model | composeImageInputValue = value }, Cmd.none )
 
         ComposePost ->
             ( model
-            , if String.length model.composeInputValue > 0 then
+            , if String.length model.composeTextInputValue > 0 then
                 composePost model
 
               else
@@ -118,7 +124,8 @@ update msg model =
         ComposedPost (Result.Ok post) ->
             ( { model
                 | posts = RemoteData.map (\posts -> post :: posts) model.posts
-                , composeInputValue = ""
+                , composeTextInputValue = ""
+                , composeImageInputValue = ""
               }
             , Cmd.none
             )
@@ -169,16 +176,26 @@ likePost model post =
 
 composePost : Model -> Cmd Msg
 composePost model =
+    let
+        imageUrl : Maybe String
+        imageUrl =
+            if model.composeImageInputValue /= "" then
+                Just model.composeImageInputValue
+
+            else
+                Nothing
+    in
     Http.post
         { url = makeApiUrl model Config.ApiCompose
         , expect = Http.expectJson ComposedPost postDecoder
         , body =
             Http.jsonBody
                 (Json.Encode.object
-                    [ ( "content", Json.Encode.string model.composeInputValue )
+                    [ ( "content", Json.Encode.string model.composeTextInputValue )
                     , ( "createdAt", Json.Encode.int <| Time.posixToMillis model.now // 1000 )
                     , ( "likes", Json.Encode.int 0 )
                     , ( "userPictureUrl", Json.Encode.string model.userData.pictureUrl )
+                    , ( "imageUrl", Json.Encode.Extra.maybe Json.Encode.string imageUrl )
                     , ( "author"
                       , Json.Encode.object
                             [ ( "id", Json.Encode.string model.userData.email )
@@ -215,7 +232,7 @@ postsDecoder =
 
 postDecoder : Decoder Post
 postDecoder =
-    map6 Post
+    map7 Post
         (field "id" string)
         (field "content" string)
         (field "author"
@@ -227,6 +244,7 @@ postDecoder =
         (field "createdAt" decodeTime)
         (field "likes" int)
         (field "userPictureUrl" string)
+        (maybe <| field "imageUrl" string)
 
 
 
