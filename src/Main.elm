@@ -230,7 +230,7 @@ postDecoder =
 
 view : Model -> Document Msg
 view model =
-    { title = "Shoob book"
+    { title = "SOMEBOOK"
     , body =
         [ headerView model, feedView model ]
             |> listFlat

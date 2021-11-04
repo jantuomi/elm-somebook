@@ -1,21 +1,24 @@
 {
-  "name": "shoob-book",
-  "version": "1.0.0",
-  "description": "",
-  "main": "",
-  "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "elm": "0.19.1-5",
-    "elm-hot": "1.1.6",
-    "node-elm-compiler": "5.0.6",
-    "parcel-bundler": "1.12.5"
-  },
-  "dependencies": {
-    "@auth0/auth0-spa-js": "1.19.2"
-  }
+    "name": "shoob-book",
+    "version": "1.0.0",
+    "description": "",
+    "main": "",
+    "scripts": {
+        "start": "parcel index.html",
+        "build": "parcel build index.html",
+        "db": "json-server --watch db.json"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "elm": "0.19.1-5",
+        "elm-format": "0.8.5",
+        "elm-hot": "1.1.6",
+        "json-server": "0.17.0",
+        "node-elm-compiler": "5.0.6",
+        "parcel-bundler": "1.12.5"
+    },
+    "dependencies": {
+        "@auth0/auth0-spa-js": "1.19.2"
+    }
 }

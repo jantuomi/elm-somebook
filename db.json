@@ -1,70 +1,13 @@
 {
-  "posts": [
-    {
-      "content": "hello",
-      "createdAt": 1635607271,
-      "likes": 3,
-      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
-      "author": {
-        "id": "jans.tuomi@gmail.com",
-        "name": "Jan Tuomi"
-      },
-      "id": "1"
-    },
-    {
-      "content": "asd",
-      "createdAt": 1635607657,
-      "likes": 0,
-      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
-      "author": {
-        "id": "jans.tuomi@gmail.com",
-        "name": "Jan Tuomi"
-      },
-      "id": "3B9scEm"
-    },
-    {
-      "content": "throwaway account here :---))",
-      "createdAt": 1635610312,
-      "likes": 0,
-      "userPictureUrl": "https://s.gravatar.com/avatar/ef587429f8bb85b585c901c528cacca9?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fnj.png",
-      "author": {
-        "id": "njezhmeteiexjqoviz@pp7rvv.com",
-        "name": "njezhmeteiexjqoviz@pp7rvv.com"
-      },
-      "id": "sKnOARV"
-    },
-    {
-      "content": "asd",
-      "createdAt": 1635610687,
-      "likes": 0,
-      "userPictureUrl": "https://s.gravatar.com/avatar/ef587429f8bb85b585c901c528cacca9?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fnj.png",
-      "author": {
-        "id": "njezhmeteiexjqoviz@pp7rvv.com",
-        "name": "njezhmeteiexjqoviz@pp7rvv.com"
-      },
-      "id": "0nOVGJM"
-    },
-    {
-      "content": "foobar",
-      "createdAt": 1635610870,
-      "likes": 0,
-      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
-      "author": {
-        "id": "jans.tuomi@gmail.com",
-        "name": "Jan Tuomi"
-      },
-      "id": "JvXaf8k"
-    },
-    {
-      "content": "benis",
-      "createdAt": 1635612178,
-      "likes": 0,
-      "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
-      "author": {
-        "id": "jans.tuomi@gmail.com",
-        "name": "Jan Tuomi"
-      },
-      "id": "_nt608q"
-    }
-  ]
+    "posts": [{
+        "content": "testi",
+        "createdAt": 1636028524,
+        "likes": 0,
+        "userPictureUrl": "https://lh3.googleusercontent.com/a-/AOh14Ggi0fsy3DrKGf2CswW96pft9BO3tDskxr0241FmxQ=s96-c",
+        "author": {
+            "id": "jans.tuomi@gmail.com",
+            "name": "Jan Tuomi"
+        },
+        "id": "1"
+    }]
 }
