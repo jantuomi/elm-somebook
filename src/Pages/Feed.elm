@@ -1,53 +1,17 @@
 module Pages.Feed exposing (..)
 
+import Components.PostList exposing (postList)
 import Css exposing (..)
-import DateFormat.Relative exposing (relativeTime)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, href, placeholder, src, type_, value)
-import Html.Styled.Events exposing (onClick, onInput, onSubmit)
-import Html.Styled.Keyed as Keyed
-import Html.Styled.Lazy exposing (lazy)
+import Html.Styled.Attributes exposing (css, placeholder, type_, value)
+import Html.Styled.Events exposing (onInput, onSubmit)
 import RemoteData exposing (RemoteData(..))
-import Time exposing (now)
-import Types exposing (Model, Msg(..), Post)
-import Utils exposing (templ)
+import Types exposing (Model, Msg(..))
 
 
 styles =
     { page =
         css [ margin2 (px 10) auto ]
-    , postList =
-        css
-            [ marginBottom (px 10)
-            ]
-    , post =
-        css
-            [ padding2 (px 15) (px 20)
-            , backgroundColor (hex "#eee")
-            , marginBottom (px 10)
-            ]
-    , postImage =
-        css
-            [ marginBottom (px 20)
-            ]
-    , postProfilePicture =
-        css
-            [ width (px 40)
-            , height (px 40)
-            ]
-    , postHeader =
-        css
-            [ display inlineBlock
-            , marginLeft (px 10)
-            ]
-    , postTitle =
-        css
-            [ margin (px 0) ]
-    , postLikeButton =
-        css
-            [ marginRight (px 5)
-            , cursor pointer
-            ]
     , composeForm =
         css
             [ displayFlex
@@ -60,45 +24,8 @@ styles =
     }
 
 
-postDiv : Time.Posix -> Post -> Html Msg
-postDiv now post =
-    let
-        imageElem =
-            case post.imageUrl of
-                Just url ->
-                    img [ styles.postImage, src url ] []
-
-                Nothing ->
-                    text ""
-    in
-    div
-        [ styles.post ]
-        [ a [ href <| templ [ post.author.id ] "/profile/{0}" ]
-            [ span []
-                [ img [ styles.postProfilePicture, src post.userPictureUrl ] [] ]
-            , span [ styles.postHeader ]
-                [ h3 [ styles.postTitle ] [ text post.author.name ]
-                , i []
-                    [ text <| relativeTime now post.createdAt
-                    ]
-                ]
-            ]
-        , p [] [ text post.content ]
-        , imageElem
-        , span []
-            [ button [ styles.postLikeButton, onClick (LikePost post) ] [ text "👏 Clap" ]
-            , text <| String.fromInt post.likes
-            ]
-        ]
-
-
-keyedPostDiv : Time.Posix -> Post -> ( String, Html Msg )
-keyedPostDiv now post =
-    ( post.id, lazy (postDiv now) post )
-
-
-postsDiv : Model -> Html Msg
-postsDiv model =
+postsContainer : Model -> Html Msg
+postsContainer model =
     case model.posts of
         Initial ->
             div [] []
@@ -110,11 +37,11 @@ postsDiv model =
             div [] []
 
         Success posts ->
-            Keyed.node "div" [ styles.postList ] <| List.map (keyedPostDiv model.now) posts
+            postList model.now posts
 
 
-composeDiv : Model -> Html Msg
-composeDiv model =
+composeForm : Model -> Html Msg
+composeForm model =
     form [ styles.composeForm, onSubmit ComposePost ]
         [ input
             [ styles.composeInput
@@ -137,15 +64,17 @@ composeDiv model =
 mainSection : Model -> Html Msg
 mainSection model =
     main_ [] <|
-        [ composeDiv model
-        , postsDiv model
+        [ composeForm model
+        , postsContainer model
         ]
 
 
 body : Model -> Html Msg
 body model =
     div [ styles.page ]
-        [ mainSection model ]
+        [ h2 [] [ "All posts" |> text ]
+        , mainSection model
+        ]
 
 
 feedView : Model -> List (Html Msg)
