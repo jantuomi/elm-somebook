@@ -46,7 +46,8 @@ const logout = () => {
 const configureClient = async() => {
     auth0 = await createAuth0Client({
         domain: authConfig.domain,
-        client_id: authConfig.clientId
+        client_id: authConfig.clientId,
+        cacheLocation: "localstorage",
     });
     window.auth0 = auth0;
 };
