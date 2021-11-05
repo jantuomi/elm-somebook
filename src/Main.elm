@@ -6,18 +6,17 @@ import Config exposing (makeApiUrl)
 import Header exposing (headerView)
 import Html.Styled exposing (..)
 import Http
-import Json.Decode exposing (Decoder, field, int, list, map2, map7, maybe, string)
-import Json.Encode
-import Json.Encode.Extra
+import JsonDecode exposing (postDecoder, postsDecoder)
+import JsonEncode exposing (composePostEncoder, likePostEncoder)
 import Pages.Feed exposing (feedView)
 import Pages.Profile exposing (profileView)
 import RemoteData
 import Routes exposing (routeParser)
 import Task
 import Time
-import Types exposing (Author, Flags, Model, Msg(..), Post, Route(..))
+import Types exposing (Flags, Model, Msg(..), Post, Route(..))
 import Url exposing (Url)
-import Url.Parser exposing ((</>), Parser, oneOf, s)
+import Url.Parser
 import Utils exposing (httpErrorToString, listFlat)
 
 
@@ -179,11 +178,7 @@ likePost model post =
         { method = "PATCH"
         , headers = []
         , url = makeApiUrl model (Config.ApiLikePost post.id)
-        , body =
-            Http.jsonBody
-                (Json.Encode.object
-                    [ ( "likes", Json.Encode.int (post.likes + 1) ) ]
-                )
+        , body = Http.jsonBody (likePostEncoder post)
         , expect = Http.expectJson LikedPost postDecoder
         , timeout = Nothing
         , tracker = Nothing
@@ -192,34 +187,10 @@ likePost model post =
 
 composePost : Model -> Cmd Msg
 composePost model =
-    let
-        imageUrl : Maybe String
-        imageUrl =
-            if model.composeImageInputValue /= "" then
-                Just model.composeImageInputValue
-
-            else
-                Nothing
-    in
     Http.post
         { url = makeApiUrl model Config.ApiCompose
         , expect = Http.expectJson ComposedPost postDecoder
-        , body =
-            Http.jsonBody
-                (Json.Encode.object
-                    [ ( "content", Json.Encode.string model.composeTextInputValue )
-                    , ( "createdAt", Json.Encode.int <| Time.posixToMillis model.now // 1000 )
-                    , ( "likes", Json.Encode.int 0 )
-                    , ( "userPictureUrl", Json.Encode.string model.userData.pictureUrl )
-                    , ( "imageUrl", Json.Encode.Extra.maybe Json.Encode.string imageUrl )
-                    , ( "author"
-                      , Json.Encode.object
-                            [ ( "id", Json.Encode.string model.userData.email )
-                            , ( "name", Json.Encode.string model.userData.name )
-                            ]
-                      )
-                    ]
-                )
+        , body = Http.jsonBody (composePostEncoder model)
         }
 
 
@@ -229,41 +200,6 @@ subscriptions _ =
         [ Time.every 5000 SetNowPosix
         , Time.every 5000 (\_ -> GetPosts)
         ]
-
-
-
--- JSON
-
-
-decodeTime : Decoder Time.Posix
-decodeTime =
-    int
-        |> Json.Decode.andThen
-            (\ms ->
-                Json.Decode.succeed <| Time.millisToPosix (ms * 1000)
-            )
-
-
-postsDecoder : Decoder (List Post)
-postsDecoder =
-    list postDecoder
-
-
-postDecoder : Decoder Post
-postDecoder =
-    map7 Post
-        (field "id" string)
-        (field "content" string)
-        (field "author"
-            (map2 Author
-                (field "id" string)
-                (field "name" string)
-            )
-        )
-        (field "createdAt" decodeTime)
-        (field "likes" int)
-        (field "userPictureUrl" string)
-        (maybe <| field "imageUrl" string)
 
 
 
