@@ -21,7 +21,6 @@ styles =
     , logoutButton =
         css
             [ marginLeft (px 10)
-            , cursor pointer
             ]
     , flexPad = css [ flex (int 1) ]
     }
@@ -33,6 +32,6 @@ headerView model =
         [ a [ href "/" ] [ h1 [] [ text "😎 SOMEBOOK" ] ]
         , div [ styles.flexPad ] []
         , div [] [ "Logged in as {0}" |> templ [ model.userData.name ] |> text ]
-        , button [ styles.logoutButton, onClick RequestLogout ] [ text "Logout" ]
+        , button [ styles.logoutButton, onClick RequestLogout ] [ text "Log out" ]
         ]
     ]

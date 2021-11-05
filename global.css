@@ -1,0 +1,35 @@
+body {
+    margin: 0 auto;
+}
+
+img {
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: initial;
+}
+
+a:hover *,
+a:active * {
+    color: orange !important;
+}
+
+a,
+h1,
+h2,
+h3 {
+    color: #454545;
+}
+
+input {
+    padding: 5px;
+}
+
+button {
+    cursor: pointer;
+}

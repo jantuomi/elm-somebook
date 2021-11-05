@@ -16,11 +16,14 @@ styles =
         css
             [ displayFlex
             , flexFlow2 row wrap
+            , margin3 (px -5) (px -5) (px 10)
             ]
     , composeInput =
         css
             [ flex (int 1)
+            , margin (px 5)
             ]
+    , submitButton = css [ margin (px 5) ]
     }
 
 
@@ -57,7 +60,7 @@ composeForm model =
             , value model.composeImageInputValue
             ]
             []
-        , button [ type_ "submit" ] [ text "➡️" ]
+        , button [ styles.submitButton, type_ "submit" ] [ text "➡️" ]
         ]
 
 

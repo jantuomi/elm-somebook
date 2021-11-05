@@ -43,7 +43,6 @@ styles =
     , postLikeButton =
         css
             [ marginRight (px 5)
-            , cursor pointer
             ]
     }
 
