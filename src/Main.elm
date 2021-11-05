@@ -225,7 +225,10 @@ composePost model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every 5000 SetNowPosix
+    Sub.batch
+        [ Time.every 5000 SetNowPosix
+        , Time.every 5000 (\_ -> GetPosts)
+        ]
 
 
 
